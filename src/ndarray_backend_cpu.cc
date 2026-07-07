@@ -142,7 +142,41 @@ void ScalarAdd(const AlignedArray& a, scalar_t val, AlignedArray* out) {
  * functions (however you want to do so, as long as the functions match the proper)
  * signatures above.
  */
+#define EWISE_TWO_OP(name, op) \
+void name(const AlignedArray& a, const AlignedArray& b, AlignedArray* out) { \
+  for (size_t i = 0; i < a.size; i++) { \
+    out->ptr[i] = op (a.ptr[i], b.ptr[i]); \
+  } \
+}
 
+EWISE_TWO_OP(EwiseMul, std::multiplies<scalar_t>())
+EWISE_TWO_OP(EwiseDiv, std::divides<scalar_t>())
+EWISE_TWO_OP(EwiseMaximum, std::max)
+EWISE_TWO_OP(EwiseEq, std::equal_to<scalar_t>())
+EWISE_TWO_OP(EwiseGe, std::greater_equal<scalar_t>())
+
+#define EWISE_ONE_OP(name, op) \
+void name(const AlignedArray& a, AlignedArray* out) { \
+  for (size_t i = 0; i < a.size; i++) { \
+    out->ptr[i] = op (a.ptr[i]); \
+  } \
+}
+EWISE_ONE_OP(EwiseLog, std::log)
+EWISE_ONE_OP(EwiseExp, std::exp)
+EWISE_ONE_OP(EwiseTanh, std::tanh)
+
+#define SCALAR_OP(name, op) \
+void name(const AlignedArray& a, scalar_t val, AlignedArray* out) { \
+  for (size_t i = 0; i < a.size; i++) { \
+    out->ptr[i] = op(a.ptr[i], val); \
+  } \
+}
+SCALAR_OP(ScalarMul, std::multiplies<scalar_t>())
+SCALAR_OP(ScalarDiv, std::divides<scalar_t>())
+SCALAR_OP(ScalarPower, std::pow)
+SCALAR_OP(ScalarMaximum, std::max)
+SCALAR_OP(ScalarEq, std::equal_to<scalar_t>())
+SCALAR_OP(ScalarGe, std::greater_equal<scalar_t>())
 
 void Matmul(const AlignedArray& a, const AlignedArray& b, AlignedArray* out, uint32_t m, uint32_t n,
             uint32_t p) {

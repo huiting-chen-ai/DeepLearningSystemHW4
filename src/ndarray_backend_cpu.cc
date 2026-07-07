@@ -62,7 +62,19 @@ void Compact(const AlignedArray& a, AlignedArray* out, std::vector<int32_t> shap
    *  function will implement here, so we won't repeat this note.)
    */
   /// BEGIN SOLUTION
-  assert(false && "Not Implemented");
+  int ndim = shape.size();
+  size_t total = 1;
+  for (int s : shape) total *= s;
+
+  for (size_t i = 0; i < total; ++i) {
+    size_t a_idx = offset;
+    size_t temp = i;
+    for (int d = ndim - 1; d >= 0; --d) {
+      a_idx += (temp % shape[d]) * strides[d];
+      temp /= shape[d];
+    }
+    out->ptr[i] = a.ptr[a_idx];
+  }
   /// END SOLUTION
 }
 

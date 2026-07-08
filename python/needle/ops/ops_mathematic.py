@@ -320,8 +320,7 @@ class ReLU(TensorOp):
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
         result = numpy.maximum(a, 0)
-        print(f"ReLU result: {result}")
-        return "hello"
+        return result
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

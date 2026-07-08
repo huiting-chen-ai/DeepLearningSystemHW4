@@ -319,8 +319,7 @@ def exp(a):
 class ReLU(TensorOp):
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
-        result = numpy.maximum(a, 0)
-        print(result.numpy())
+        result = numpy.maximum(a.realize_cached_data(), 0)
         return result
         ### END YOUR SOLUTION
 

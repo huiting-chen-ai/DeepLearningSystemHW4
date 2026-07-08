@@ -320,6 +320,7 @@ class ReLU(TensorOp):
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
         result = numpy.maximum(a, 0)
+        print(result.numpy())
         return result
         ### END YOUR SOLUTION
 

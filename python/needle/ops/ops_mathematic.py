@@ -364,7 +364,7 @@ class Stack(TensorOp):
     def compute(self, args: TensorTuple) -> Tensor:
         ### BEGIN YOUR SOLUTION
         numpy_arrays = [arg.numpy() for arg in args]
-        return Tensor(numpy.stack(numpy_arrays, axis=self.axis))
+        return numpy.stack(numpy_arrays, axis=self.axis)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

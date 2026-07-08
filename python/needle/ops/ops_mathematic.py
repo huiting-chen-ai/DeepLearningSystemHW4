@@ -175,7 +175,7 @@ class Reshape(TensorOp):
 
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
-        return numpy.reshape(a, self.shape)
+        return array_api.reshape(a, self.shape)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):
@@ -397,11 +397,12 @@ class Split(TensorTupleOp):
     def compute(self, A):
         ### BEGIN YOUR SOLUTION
         input_shape = list(A.shape)
+        output_shape = input_shape[:self.axis]+input_shape[self.axis+1:]
         result = []
         for i in range(A.shape[self.axis]):
             slices = [slice(None)] * len(input_shape)
             slices[self.axis] = i
-            result.append(A[tuple(slices)])
+            result.append(A[tuple(slices)]).compact().reshape(output_shape)
         return tuple(result)
         ### END YOUR SOLUTION
 

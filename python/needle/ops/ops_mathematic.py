@@ -369,7 +369,8 @@ class Stack(TensorOp):
 
     def gradient(self, out_grad, node):
         ### BEGIN YOUR SOLUTION
-        return split(out_grad, self.axis)
+        size = len(node.inputs)
+        return tuple(Tensor(numpy.split(out_grad, size, axis=self.axis)))
         ### END YOUR SOLUTION
 
 
@@ -389,7 +390,7 @@ class Split(TensorTupleOp):
 
     def compute(self, A):
         ### BEGIN YOUR SOLUTION
-        return tuple(numpy.split(A, A.shape[self.axis], axis=self.axis))
+        return tuple(Tensor(numpy.split(A, A.shape[self.axis], axis=self.axis)))
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

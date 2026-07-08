@@ -365,7 +365,7 @@ class Stack(TensorOp):
         ### BEGIN YOUR SOLUTION
         target_shape = list(args[0].shape)
         target_shape = target_shape[:self.axis]+[len(args)]+target_shape[self.axis:]
-        result = array_api.zeros(tuple(target_shape))
+        result = array_api.empty(tuple(target_shape))
         for i, arg in enumerate(args):
             slices = [slice(None)] * len(target_shape)
             slices[self.axis] = i

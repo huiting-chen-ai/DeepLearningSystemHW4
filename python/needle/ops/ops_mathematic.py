@@ -195,7 +195,7 @@ class BroadcastTo(TensorOp):
 
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
-        return numpy.broadcast_to(a, self.shape)
+        return array_api.broadcast_to(a, self.shape)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):
@@ -402,7 +402,7 @@ class Split(TensorTupleOp):
         for i in range(A.shape[self.axis]):
             slices = [slice(None)] * len(input_shape)
             slices[self.axis] = i
-            result.append(Tensor(A[tuple(slices)]).reshape(output_shape))
+            result.append(A[tuple(slices)]).reshape(output_shape)
         return tuple(result)
         ### END YOUR SOLUTION
 

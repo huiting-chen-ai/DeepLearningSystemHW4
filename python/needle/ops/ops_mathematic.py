@@ -363,16 +363,19 @@ class Stack(TensorOp):
 
     def compute(self, args: TensorTuple) -> Tensor:
         ### BEGIN YOUR SOLUTION
-        numpy_arrays = [arg.numpy() for arg in args]
-        return numpy.stack(numpy_arrays, axis=self.axis)
+        target_shape = list(args[0].shape)
+        target_shape = target_shape[:self.axis]+[len(args)]+target_shape[self.axis:]
+        result = array_api.zeros(tuple(target_shape))
+        for i, arg in enumerate(args):
+            slices = [slice(None)] * len(target_shape)
+            slices[self.axis] = i
+            result[tuple(slices)] = arg
+        return result
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):
         ### BEGIN YOUR SOLUTION
-        out_grad_data = out_grad.realize_cached_data()
-        size = len(node.inputs[0])
-        split_grads = numpy.split(out_grad_data, size, axis=self.axis)
-        return tuple(Tensor(grad) for grad in split_grads)
+        return split(out_grad, self.axis)
         ### END YOUR SOLUTION
 
 
@@ -392,7 +395,13 @@ class Split(TensorTupleOp):
 
     def compute(self, A):
         ### BEGIN YOUR SOLUTION
-        return tuple(Tensor(numpy.split(A, A.shape[self.axis], axis=self.axis)))
+        input_shape = list(A.shape)
+        result = []
+        for i in range(A.shape[self.axis]):
+            slices = [slice(None)] * len(input_shape)
+            slices[self.axis] = i
+            result.append(A[tuple(slices)])
+        return tuple(result)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

@@ -155,8 +155,8 @@ class Transpose(TensorOp):
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
         if self.axes is not None:
-            return numpy.swapaxes(a, self.axes[0], self.axes[1])
-        return numpy.swapaxes(a, a.ndim - 1, a.ndim - 2)
+            return array_api.swapaxes(a, self.axes[0], self.axes[1])
+        return array_api.swapaxes(a, a.ndim - 1, a.ndim - 2)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

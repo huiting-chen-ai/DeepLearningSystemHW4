@@ -160,7 +160,7 @@ class Transpose(TensorOp):
             new_axes[self.axes[1]] = self.axes[0]
         else:
             temp = new_axes[-1]
-            new_axes[-1] = self.axes[-2]
+            new_axes[-1] = new_axes[-2]
             new_axes[-2] = temp
         return a.permute(new_axes)
         ### END YOUR SOLUTION

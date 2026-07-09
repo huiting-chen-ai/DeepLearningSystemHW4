@@ -154,9 +154,10 @@ class Transpose(TensorOp):
 
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
-        if self.axes is not None:
-            return array_api.swapaxes(a, self.axes[0], self.axes[1])
-        return array_api.swapaxes(a, a.ndim - 1, a.ndim - 2)
+        return a.permute(self.axes)
+        # if self.axes is not None:
+        #     return array_api.permute(a, self.axes[0], self.axes[1])
+        # return array_api.permute(a, a.ndim - 1, a.ndim - 2)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

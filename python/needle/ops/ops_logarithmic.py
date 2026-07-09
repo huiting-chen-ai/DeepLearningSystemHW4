@@ -37,8 +37,8 @@ class LogSumExp(TensorOp):
     def compute(self, Z: NDArray) -> NDArray:
         ### BEGIN YOUR SOLUTION
         M = Z.max(axis=self.axes, keepdims=True)
-        M_shape = Z.shape
-        if self.axes:
+        M_shape = list(Z.shape)
+        if self.axes is not None:
             for ax in self.axes:
                 M_shape[ax] = 1
         else:

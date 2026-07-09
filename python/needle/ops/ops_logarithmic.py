@@ -37,9 +37,15 @@ class LogSumExp(TensorOp):
     def compute(self, Z: NDArray) -> NDArray:
         ### BEGIN YOUR SOLUTION
         # M = array_api.max(Z, axis=self.axes, keepdims=True)
-        M = Z.max(axis=self.axes, keepdims=True).reshape(Z.shape)
-        r = array_api.log(array_api.sum(array_api.exp(Z-M), axis=self.axes, keepdims=True)).reshape(Z.shape)+M
-        return array_api.squeeze(r, axis=self.axes)
+        M = Z.max(axis=self.axes, keepdims=True)
+        r = array_api.log(array_api.sum(array_api.exp(Z-M.broadcast_to(Z.shape)), axis=self.axes, keepdims=True))+M
+        new_shape = list(r.shape)
+        if isinstance(self.axes, int):
+            new_shape.pop(self.axes)
+        else:
+            for ax in reversed(self.axes):
+                new_shape.pop(ax)
+        return r.reshape(new_shape)
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad: Tensor, node: Tensor):

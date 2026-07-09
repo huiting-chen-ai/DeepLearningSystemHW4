@@ -36,7 +36,8 @@ class LogSumExp(TensorOp):
 
     def compute(self, Z: NDArray) -> NDArray:
         ### BEGIN YOUR SOLUTION
-        M = array_api.max(Z, axis=self.axes, keepdims=True)
+        # M = array_api.max(Z, axis=self.axes, keepdims=True)
+        M = Z.max(axis=self.axes, keepdims=True)
         r = array_api.log(array_api.sum(array_api.exp(Z-M), axis=self.axes, keepdims=True))+M
         return array_api.squeeze(r, axis=self.axes)
         ### END YOUR SOLUTION

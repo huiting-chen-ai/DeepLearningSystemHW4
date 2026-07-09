@@ -39,17 +39,23 @@ class LogSumExp(TensorOp):
         M = Z.max(axis=self.axes, keepdims=True)
         M_shape = list(Z.shape)
         if self.axes is not None:
-            for ax in self.axes:
-                M_shape[ax] = 1
+            if isinstance(self.axes, int):
+                M_shape[self.axes] = 1
+            else:
+                for ax in self.axes:
+                    M_shape[ax] = 1
         else:
             M_shape = [1] * len(M_shape)
         r = array_api.log(array_api.sum(array_api.exp(Z-M.reshape(M_shape).broadcast_to(Z.shape)), axis=self.axes, keepdims=True))+M
         new_shape = list(r.shape)
-        if isinstance(self.axes, int):
-            new_shape.pop(self.axes)
+        if self.axes is not None:
+            if isinstance(self.axes, int):
+                new_shape.pop(self.axes)
+            else:
+                for ax in reversed(self.axes):
+                    new_shape.pop(ax)
         else:
-            for ax in reversed(self.axes):
-                new_shape.pop(ax)
+            new_shape = [1]
         return r.reshape(new_shape)
         ### END YOUR SOLUTION
 

@@ -230,8 +230,11 @@ class Summation(TensorOp):
         input_shape = node.inputs[0].shape
         new_shape = list(input_shape)
         if self.axes is not None:
-            for axis in self.axes:
-                new_shape[axis] = 1
+            if isinstance(self.axis, int):
+                new_shape[self.axis] = 1
+            else:
+                for axis in self.axes:
+                    new_shape[axis] = 1
         else:
             new_shape = [1]*len(input_shape)
         return out_grad.reshape(new_shape).broadcast_to(input_shape)

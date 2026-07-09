@@ -28,13 +28,13 @@ class CIFAR10Dataset(Dataset):
             for i in range(1, 6):
                 with open(f"{base_folder}/data_batch_{i}", 'rb') as fo:
                     dict_cifar = pickle.load(fo, encoding='bytes')
-                    X_batches += dict_cifar['data']
-                    y_batches += dict_cifar['labels']
+                    X_batches += dict_cifar[b'data']
+                    y_batches += dict_cifar[b'labels']
         else:
             with open(f"{base_folder}/test_batch", 'rb') as fo:
                 dict_cifar = pickle.load(fo, encoding='bytes')
-                X_batches = dict_cifar['data']
-                y_batches = dict_cifar['labels']
+                X_batches = dict_cifar[b'data']
+                y_batches = dict_cifar[b'labels']
         X_batches = X_batches/255.0
         for i, X in enumerate(X_batches):
             for t in transforms:

@@ -630,7 +630,10 @@ class NDArray:
         Note: compact() before returning.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        new_strides = (-s if i in axes else s for i, s in enumerate(self._strides))
+        new_offset = self._offset + sum(s*(self._shape[i]-1) for i, s in enumerate(self._strides) if i in axes)
+        out = NDArray.make(self._shape, new_strides, self._device, self._handle, new_offset).compact()
+        return out
         ### END YOUR SOLUTION
 
     def pad(self, axes: tuple[tuple[int, int], ...]) -> "NDArray":
@@ -640,7 +643,11 @@ class NDArray:
         axes = ( (0, 0), (1, 1), (0, 0)) pads the middle axis with a 0 on the left and right side.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        new_shape = (s+axes[i][0]+axes[i][1] for i, s in enumerate(self._shape))
+        out = self.device.full(new_shape, fill_value=0)
+        slices = tuple(slice(axes[i][0], axes[i][0]+s) for i, s in enumerate(self._shape))
+        out[slices] = self
+        return out
         ### END YOUR SOLUTION
 
 def array(a: Any, dtype: str = "float32", device: BackendDevice | None = None) -> NDArray:

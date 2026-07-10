@@ -436,7 +436,7 @@ class Flip(TensorOp):
 
     def gradient(self, out_grad, node):
         ### BEGIN YOUR SOLUTION
-        return array_api.flip(out_grad, self.axes)
+        return array_api.flip(out_grad.realize_cached_data(), self.axes)
         ### END YOUR SOLUTION
 
 

@@ -631,7 +631,10 @@ class NDArray:
         """
         ### BEGIN YOUR SOLUTION
         new_strides = (-s if i in axes else s for i, s in enumerate(self._strides))
-        new_offset = self._offset + sum([s*(self._shape[i]-1) for i, s in enumerate(self._strides) if i in axes])
+        new_offset = self._offset
+        for i, s in enumerate(self._strides):
+            if i in axes:
+                new_offset += s*(self._shape[i]-1)
         out = NDArray.make(self._shape, new_strides, self._device, self._handle, new_offset).compact()
         return out
         ### END YOUR SOLUTION

@@ -504,7 +504,7 @@ class Conv(TensorOp):
         out = array_api.full((N,H-K+1,W-K+1,C_out), 0, device=A.device)
         for i in range(K):
             for j in range(K):
-                out += A[:,i:i+H-K+1,j:j+W-K+1,:] @ B[i,j]
+                out += A[:,i:i+H-K+1,j:j+W-K+1,:] @ B[i,j,:,:]
         return out
         ### END YOUR SOLUTION
 

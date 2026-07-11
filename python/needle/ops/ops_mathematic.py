@@ -523,7 +523,7 @@ class Conv(TensorOp):
 
         A_permute = A.permute((3, 1, 2, 0)).compact()
         out_grad_dilate__ = out_grad_dilate.permute((1, 2, 0, 3)).compact()
-        B_grad = conv(A_permute, out_grad_dilate__, stride=1, padding=self.padding)
+        B_grad = conv(A_permute, out_grad_dilate__, stride=1, padding=self.padding).compact()
         B_grad = B_grad.reshape((1, 2, 0, 3)).compact()
         return A_grad, B_grad
         ### END YOUR SOLUTION

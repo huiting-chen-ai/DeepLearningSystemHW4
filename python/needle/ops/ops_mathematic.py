@@ -517,8 +517,8 @@ class Conv(TensorOp):
         ### BEGIN YOUR SOLUTION
         A, B = node.inputs[0], node.inputs[1]
         B_flip = flip(B, (0, 1))
-        B_flip = transpose(B_flip, (2, 3))
-        out_grad_dilate = dilate(out_grad, (1, 2), self.stride-1)
+        B_flip = transpose(B_flip, (2, 3)).compact()
+        out_grad_dilate = dilate(out_grad, (1, 2), self.stride-1).compact()
         A_grad = conv(out_grad, B_flip, stride=1, padding=B.shape[0]-1-self.padding)
 
         A_permute = A.permute((3, 1, 2, 0)).compact()

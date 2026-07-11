@@ -616,13 +616,10 @@ class NDArray:
 
     def sum(self, axis: int | tuple[int, ...] | list[int] | None = None, keepdims: bool = False) -> "NDArray":
         if isinstance(axis, (tuple, list)):
-            for i, axis_ in enumerate(axis):
-                if i==0:
-                    view, out = self.reduce_view_out(axis_, keepdims=keepdims)
-                    self.device.reduce_sum(view.compact()._handle, out._handle, view.shape[-1])
-                else:
-                    view, out = out.reduce_view_out(axis_, keepdims=keepdims)
-                    self.device.reduce_sum(view.compact()._handle, out._handle, view.shape[-1])
+            result = self
+            for axis_ in sorted(axis, reverse=True):
+                result = result.sum(axis=axis_, keepdims=keepdims)
+            return result
         else:
             view, out = self.reduce_view_out(axis, keepdims=keepdims)
             self.device.reduce_sum(view.compact()._handle, out._handle, view.shape[-1])

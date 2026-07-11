@@ -523,7 +523,7 @@ class Conv(TensorOp):
         out_grad_dilate = dilate(out_grad, (1, 2), self.stride-1)
         A_grad = conv(out_grad, B_flip, stride=1, padding=B.shape[0]-1-self.padding)
 
-        A_permute = A.permute((3, 1, 2, 0)).compact()
+        A_permute = transpose(A, (0, 3))
         out_grad_dilate__ = out_grad_dilate.permute((1, 2, 0, 3)).compact()
         B_grad = conv(A_permute, out_grad_dilate__, stride=1, padding=self.padding).compact()
         B_grad = B_grad.reshape((1, 2, 0, 3)).compact()

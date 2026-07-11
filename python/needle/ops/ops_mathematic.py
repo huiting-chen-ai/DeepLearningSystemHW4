@@ -499,6 +499,8 @@ class Conv(TensorOp):
 
     def compute(self, A, B):
         ### BEGIN YOUR SOLUTION
+        A = A.compact()
+        B = B.compact()
         if self.padding != 0:
             A = A.pad(((0, 0), (self.padding, self.padding), (self.padding, self.padding), (0, 0)))
         N,H,W,C_in = A.shape
@@ -517,7 +519,7 @@ class Conv(TensorOp):
         ### BEGIN YOUR SOLUTION
         A, B = node.inputs[0], node.inputs[1]
         B_flip = flip(B, (0, 1))
-        B_flip = transpose(B_flip, (2, 3)).compact()
+        B_flip = transpose(B_flip, (2, 3))
         out_grad_dilate = dilate(out_grad, (1, 2), self.stride-1).compact()
         A_grad = conv(out_grad, B_flip, stride=1, padding=B.shape[0]-1-self.padding)
 

@@ -49,7 +49,7 @@ class Conv(Module):
             bias = ops.reshape(self.bias, (1, 1, 1, self.out_channels))
             bias = ops.broadcast_to(bias, convolution.shape)
             convolution = convolution+bias
-        convolution = ops.transpose(convolution, (1, 2))
+        convolution = ops.transpose(convolution, (1, 3))
         convolution = ops.transpose(convolution, (2, 3))
         return convolution
         ### END YOUR SOLUTION

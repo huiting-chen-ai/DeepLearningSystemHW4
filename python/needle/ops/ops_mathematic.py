@@ -509,7 +509,7 @@ class Conv(TensorOp):
         new_input_shape = (N, (H-K+1)//self.stride, (W-K+1)//self.stride, K, K, C_in)
         new_input_stride = (A._strides[0], A._strides[1]*self.stride, A._strides[2]*self.stride, A._strides[1], A._strides[2], A._strides[3])
         new_input = A.as_strided(new_input_shape, new_input_stride).compact()
-        new_input = new_input.reshape((N*(H-K+1)*(W-K+1)//self.stride**2, K*K*C_in)).compact()
+        new_input = new_input.reshape((N*((H-K+1)//self.stride)*((W-K+1)//self.stride), K*K*C_in)).compact()
         out = new_input@new_kernel
         out = out.reshape((N, (H-K+1)//self.stride, (W-K+1)//self.stride, C_out)).compact()
         return out

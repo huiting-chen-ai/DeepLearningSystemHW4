@@ -499,6 +499,8 @@ class Conv(TensorOp):
 
     def compute(self, A, B):
         ### BEGIN YOUR SOLUTION
+        if self.padding != 0:
+            A = A.pad(((0, 0), (self.padding, self.padding), (self.padding, self.padding), (0, 0)))
         N,H,W,C_in = A.shape
         K,_,_,C_out = B.shape
         new_kernel = B.reshape((K*K*C_in, C_out)).compact()

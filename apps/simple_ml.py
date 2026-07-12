@@ -37,7 +37,16 @@ def parse_mnist(image_filename, label_filename):
                 for MNIST will contain the values 0-9.
     """
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    with gzip.open(label_filename, "rb") as f:
+        f.read(8)
+        y = np.frombuffer(f.read(), dtype=np.uint8)
+    
+    with gzip.open(image_filename, "rb") as f:
+        f.read(16)
+        X = np.frombuffer(f.read(), dtype=np.uint8)
+        X = X.reshape(len(y), 784).astype(np.float32)
+        X /= 255.0
+    return (X, y)
     ### END YOUR SOLUTION
 
 
@@ -58,7 +67,9 @@ def softmax_loss(Z, y_one_hot):
         Average softmax loss over the sample. (ndl.Tensor[np.float32])
     """
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    log_sum = ndl.log(ndl.summation(ndl.exp(Z), axes=(1,)))
+    correct_class = ndl.summation(Z * y_one_hot, axes=(1,))
+    return (log_sum - correct_class).sum()/Z.shape[0]
     ### END YOUR SOLUTION
 
 
@@ -87,7 +98,26 @@ def nn_epoch(X, y, W1, W2, lr=0.1, batch=100):
     """
 
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    num_classes = W2.shape[1]
+    for i in range(0, len(y), batch):
+        batch_X = X[i:i+batch]
+        batch_y = y[i:i+batch]
+        
+        batch_X = ndl.Tensor(batch_X)
+        Z1 = batch_X @ W1
+        A1 = ndl.relu(Z1)
+
+        logits = A1 @ W2
+        
+        batch_y = ndl.Tensor(batch_y)
+        y_one_hot = ndl.init.one_hot(num_classes, batch_y)
+        loss = softmax_loss(logits, y_one_hot)
+
+        loss.backward()
+        
+        W1 -= lr * W1.grad
+        W2 -= lr * W2.grad
+    return W1, W2
     ### END YOUR SOLUTION
 
 ### CIFAR-10 training ###
@@ -110,7 +140,33 @@ def epoch_general_cifar10(dataloader, model, loss_fn=nn.SoftmaxLoss(), opt=None)
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    total_loss = 0
+    total_correct = 0
+    total_examples = 0
+
+    if opt is not None:
+        model.train()
+    else:
+        model.eval()
+
+    for _, batch in enumerate(dataloader):
+        X, y = batch
+        # X = X.reshape((X.shape[0], -1))
+        logits = model(X)
+        loss = loss_fn(logits, y)
+        if opt is not None:
+            opt.reset_grad()
+            loss.backward()
+            opt.step()
+
+        # Compute metrics
+        total_loss += loss.numpy() * X.shape[0]
+        total_correct += np.sum(logits.numpy().argmax(axis=1) == y.numpy())
+        total_examples += X.shape[0]
+
+    avg_loss = total_loss / total_examples
+    avg_accuracy = total_correct / total_examples
+    return avg_accuracy, avg_loss
     ### END YOUR SOLUTION
 
 
@@ -134,7 +190,11 @@ def train_cifar10(model, dataloader, n_epochs=1, optimizer=ndl.optim.Adam,
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    opt = optimizer(model.parameters(), lr=lr, weight_decay=weight_decay)
+    loss = loss_fn()
+    for i in range(n_epochs):
+        avg_acc, avg_loss = epoch_general_cifar10(dataloader, model, loss, opt)
+    return avg_acc, avg_loss
     ### END YOUR SOLUTION
 
 
@@ -153,7 +213,9 @@ def evaluate_cifar10(model, dataloader, loss_fn=nn.SoftmaxLoss):
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    loss = loss_fn()
+    avg_acc, avg_loss = epoch_general_cifar10(dataloader, model, loss, None)
+    return avg_acc, avg_loss
     ### END YOUR SOLUTION
 
 

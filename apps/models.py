@@ -6,17 +6,51 @@ import math
 import numpy as np
 np.random.seed(0)
 
+class ConvBD(ndl.nn.Module):
+    def __init__(self, a, b, k, s, device=None, dtype="float32"):
+        super.__init__
+        self.conv = ndl.nn.Conv(a, b, k, stride=s, device=device, dtype=dtype)
+        self.batchnorm = ndl.nn.BatchNorm2d(b, device=device, dtype=dtype)
+        self.relu = ndl.nn.ReLU()
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.batchnorm(x)
+        x = self.relu(x)
+        return x
 
 class ResNet9(ndl.nn.Module):
     def __init__(self, device=None, dtype="float32"):
         super().__init__()
         ### BEGIN YOUR SOLUTION ###
-        raise NotImplementedError() ###
+        self.convBD1 = ConvBD(3, 16, 7, 4, device=device, dtype=dtype)
+        self.convBD2 = ConvBD(16, 32, 3, 2, device=device, dtype=dtype)
+        self.res3 = ndl.nn.Residual(
+            ndl.nn.Sequential(ConvBD(32, 32, 3, 1, device=device, dtype=dtype),
+                              ConvBD(32, 32, 3, 1, device=device, dtype=dtype))
+        )
+        self.convBD4 = ConvBD(32, 64, 3, 2, device=device, dtype=dtype)
+        self.convBD5 = ConvBD(64, 128, 3, 2, device=device, dtype=dtype)
+        self.res6 = ndl.nn.Residual(
+            ndl.nn.Sequential(ConvBD(128, 128, 3, 1, device=device, dtype=dtype),
+                              ConvBD(128, 128, 3, 1, device=device, dtype=dtype))
+        )
+        self.linear7 = ndl.nn.Linear(128, 128, device=device, dtype=dtype)
+        self.relu8 = ndl.nn.ReLU()
+        self.linear9 = ndl.nn.Linear(128, 10, device=device, dtype=dtype)
         ### END YOUR SOLUTION
 
     def forward(self, x):
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        x = self.convBD1(x)
+        x = self.convBD2(x)
+        x = self.res3(x)
+        x = self.convBD4(x)
+        x = self.convBD5(x)
+        x = self.res6(x)
+        x = self.linear7(x)
+        x = self.relu8(x)
+        x = self.linear9(x)
+        return x
         ### END YOUR SOLUTION
 
 

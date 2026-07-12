@@ -9,7 +9,7 @@ np.random.seed(0)
 class ConvBD(ndl.nn.Module):
     def __init__(self, a, b, k, s, device=None, dtype="float32"):
         super().__init__()
-        self.conv = ndl.nn.Conv(a, b, k, stride=s, device=device, dtype=dtype, bias=False)
+        self.conv = ndl.nn.Conv(a, b, k, stride=s, device=device, dtype=dtype)
         self.batchnorm = ndl.nn.BatchNorm2d(b, device=device, dtype=dtype)
         self.relu = ndl.nn.ReLU()
     def forward(self, x):

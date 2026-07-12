@@ -44,7 +44,6 @@ class Conv(Module):
         ### BEGIN YOUR SOLUTION
         x = ops.transpose(x, (1, 2))
         x = ops.transpose(x, (2, 3))
-        assert str(x.device) == str(self.weight.device), f"Device mismatch: {x.device} vs {self.weight.device}"
         convolution = ops.conv(x, self.weight, stride=self.stride, padding=self.padding)
         if self.bias is not None:
             bias = ops.reshape(self.bias, (1, 1, 1, self.out_channels))

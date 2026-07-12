@@ -34,6 +34,7 @@ class ResNet9(ndl.nn.Module):
             ndl.nn.Sequential(ConvBD(128, 128, 3, 1, device=device, dtype=dtype),
                               ConvBD(128, 128, 3, 1, device=device, dtype=dtype))
         )
+        self.flatten = ndl.nn.Flatten()
         self.linear7 = ndl.nn.Linear(128, 128, device=device, dtype=dtype)
         self.relu8 = ndl.nn.ReLU()
         self.linear9 = ndl.nn.Linear(128, 10, device=device, dtype=dtype)
@@ -47,6 +48,7 @@ class ResNet9(ndl.nn.Module):
         x = self.convBD4(x)
         x = self.convBD5(x)
         x = self.res6(x)
+        x = self.flatten(x)
         x = self.linear7(x)
         x = self.relu8(x)
         x = self.linear9(x)

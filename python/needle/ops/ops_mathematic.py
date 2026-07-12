@@ -328,8 +328,8 @@ def exp(a):
 class ReLU(TensorOp):
     def compute(self, a):
         ### BEGIN YOUR SOLUTION
-        result = numpy.maximum(a.numpy(), 0)
-        return NDArray(result)
+        result = array_api.maximum(a, 0)
+        return result
         ### END YOUR SOLUTION
 
     def gradient(self, out_grad, node):

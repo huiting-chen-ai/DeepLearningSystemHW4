@@ -13,9 +13,13 @@ class ConvBD(ndl.nn.Module):
         self.batchnorm = ndl.nn.BatchNorm2d(b, device=device, dtype=dtype)
         self.relu = ndl.nn.ReLU()
     def forward(self, x):
+        print(x.device)
         x = self.conv(x)
+        print(x.device)
         x = self.batchnorm(x)
+        print(x.device)
         x = self.relu(x)
+        print(x.device)
         return x
 
 class ResNet9(ndl.nn.Module):

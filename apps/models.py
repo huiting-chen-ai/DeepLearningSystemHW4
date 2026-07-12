@@ -13,13 +13,16 @@ class ConvBD(ndl.nn.Module):
         self.batchnorm = ndl.nn.BatchNorm2d(b, device=device, dtype=dtype)
         self.relu = ndl.nn.ReLU()
     def forward(self, x):
-        print(x.device)
+        device0 = str(x.device)
         x = self.conv(x)
-        print(x.device)
+        device1 = str(x.device)
         x = self.batchnorm(x)
-        print(x.device)
+        device2 = str(x.device)
         x = self.relu(x)
-        print(x.device)
+        device3 = str(x.device)
+        assert device0 == device1
+        assert device0 == device2
+        assert device0 == device3
         return x
 
 class ResNet9(ndl.nn.Module):

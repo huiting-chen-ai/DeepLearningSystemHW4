@@ -131,7 +131,7 @@ class RNN(Module):
         ### BEGIN YOUR SOLUTION
         seq_len, bs, input_size = X.shape
         if h0 is None:
-            h = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+            h0 = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
                        device=self.device, dtype=self.dtype, requires_grad=False)
         temp_X = list(ops.split(X, 0))
         temp_h = list(ops.split(h0, 0))

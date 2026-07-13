@@ -14,7 +14,7 @@ class Sigmoid(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         ### BEGIN YOUR SOLUTION
-        out = 1/(1+ops.exp(-x))
+        out = (1+ops.exp(-x))**(-1)
         ### END YOUR SOLUTION
 
 class RNNCell(Module):
@@ -176,6 +176,8 @@ class LSTMCell(Module):
             self.bias_hh = None
         self.sig = Sigmoid()
         self.hidden_size = hidden_size
+        self.device = device
+        self.dtype = dtype
         ### END YOUR SOLUTION
 
 

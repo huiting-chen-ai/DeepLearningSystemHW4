@@ -216,7 +216,7 @@ class LSTMCell(Module):
         i = self.sig(ops.stack(ifgo[0:self.hidden_size], 1))
         f = self.sig(ops.stack(ifgo[self.hidden_size:2*self.hidden_size], 1))
         g = ops.tanh(ops.stack(ifgo[2*self.hidden_size:3*self.hidden_size], 1))
-        o = self.sig(ops.stack(ifgo[3*self.hidden_size:4:self.hidden_size], 1))
+        o = self.sig(ops.stack(ifgo[3*self.hidden_size:4*self.hidden_size], 1))
         c_ = f*c0+i*g
         h_ = o*ops.tanh(c_)
         return h_, c_

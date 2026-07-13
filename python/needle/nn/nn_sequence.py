@@ -107,7 +107,10 @@ class RNN(Module):
         """
         super().__init__()
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        self.rnn_cells = [RNNCell(input_size, hidden_size, bias, nonlinearity, device, dtype)]
+        for i in range(1, num_layers):
+            self.rnn_cells.append(RNNCell(hidden_size, hidden_size, bias, nonlinearity, device, dtype))
+        self.num_layers = num_layers
         ### END YOUR SOLUTION
 
     def forward(self, X, h0=None):
@@ -123,7 +126,17 @@ class RNN(Module):
         h_n of shape (num_layers, bs, hidden_size) containing the final hidden state for each element in the batch.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        seq_len, bs, input_size = X.shape
+        if h0 is None:
+            h = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+        temp_X = list(ops.split(X, 0))
+        temp_h = list(ops.split(h0, 0))
+        for i in range(seq_len):
+            for j in range(self.num_layers):
+                temp_X[i] = self.rnn_cells[j](temp_X[i], temp_h[j])
+                temp_h[j] = temp_X[i]
+        return temp_X, temp_h
         ### END YOUR SOLUTION
 
 

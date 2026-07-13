@@ -14,7 +14,7 @@ class Sigmoid(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        out = 1/(1+ops.exp(-x))
         ### END YOUR SOLUTION
 
 class RNNCell(Module):

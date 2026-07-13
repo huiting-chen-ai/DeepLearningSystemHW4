@@ -248,7 +248,13 @@ class LSTM(Module):
             of shape (4*hidden_size,).
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        self.lstm_cells = [LSTM(input_size, hidden_size, bias, device, dtype)]
+        for i in range(1, num_layers):
+            self.lstm_cells.append(LSTM(hidden_size, hidden_size, bias, device, dtype))
+        self.num_layers = num_layers
+        self.hidden_size = hidden_size
+        self.device = device
+        self.dtype = dtype
         ### END YOUR SOLUTION
 
     def forward(self, X, h=None):
@@ -269,7 +275,25 @@ class LSTM(Module):
             h_n of shape (num_layers, bs, hidden_size) containing the final hidden cell state for each element in the batch.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        seq_len, bs, input_size = X.shape
+        if h is None:
+            h0 = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+            c0 = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+        temp_X = list(ops.split(X, 0))
+        temp_h = list(ops.split(h0, 0))
+        temp_c = list(ops.split(c0, 0))
+        for i in range(seq_len):
+            for j in range(self.num_layers):
+                h_, c_ = self.lstm_cells[j](temp_X[i], (temp_h[j], temp_c[j]))
+                temp_h[j] = h_
+                temp_c[j] = c_
+                temp_X[i] = h_
+        temp_X = ops.stack(temp_X, 0)
+        temp_h = ops.stack(temp_h, 0)
+        temp_c = ops.stack(temp_c, 0)
+        return temp_X, (temp_h, temp_c)
         ### END YOUR SOLUTION
 
 class Embedding(Module):

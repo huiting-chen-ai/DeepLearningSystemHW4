@@ -281,6 +281,9 @@ class LSTM(Module):
                        device=self.device, dtype=self.dtype, requires_grad=False)
             c0 = Tensor(init.zeros(self.num_layers, bs, self.hidden_size, device=self.device, dtype=self.dtype), 
                        device=self.device, dtype=self.dtype, requires_grad=False)
+        else:
+            h0 = h[0]
+            c0 = h[1]
         temp_X = list(ops.split(X, 0))
         temp_h = list(ops.split(h0, 0))
         temp_c = list(ops.split(c0, 0))

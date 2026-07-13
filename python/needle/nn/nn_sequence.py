@@ -139,6 +139,8 @@ class RNN(Module):
             for j in range(self.num_layers):
                 temp_X[i] = self.rnn_cells[j](temp_X[i], temp_h[j])
                 temp_h[j] = temp_X[i]
+        temp_X = ops.stack(temp_X, 0)
+        temp_h = ops.stack(temp_h, 0)
         return temp_X, temp_h
         ### END YOUR SOLUTION
 

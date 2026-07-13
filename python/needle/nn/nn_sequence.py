@@ -38,7 +38,19 @@ class RNNCell(Module):
         """
         super().__init__()
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        bound = 1/np.sqrt(hidden_size)
+        self.hidden_size = hidden_size
+        self.device = device
+        self.dtype = dtype
+        self.W_ih = Parameter(init.rand(input_size, hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        self.W_hh = Parameter(init.rand(hidden_size, hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        if bias:
+            self.bias_ih = self.W_ih = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+            self.bias_hh = self.W_ih = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        else:
+            self.bias_ih = None
+            self.bias_hh = None
+        self.nonlinearity = nonlinearity
         ### END YOUR SOLUTION
 
     def forward(self, X, h=None):
@@ -53,7 +65,20 @@ class RNNCell(Module):
             for each element in the batch.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        bs = X.shape[0]
+        if h is None:
+            h = Tensor(init.zeros(bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+        new_W = X@self.W_ih+h@self.W_hh
+        if self.bias_hh:
+            bias = self.bias_hh+self.bias_ih
+            bias = bias.reshape((1, self.hidden_size))
+            bias = bias.broadcast_to(new_W.shape)
+            new_W = new_W+bias
+        if self.nonlinearity == "tanh":
+            return ops.tanh(new_W)
+        else:
+            return ops.relu(new_W)
         ### END YOUR SOLUTION
 
 

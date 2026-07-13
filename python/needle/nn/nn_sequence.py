@@ -111,6 +111,9 @@ class RNN(Module):
         for i in range(1, num_layers):
             self.rnn_cells.append(RNNCell(hidden_size, hidden_size, bias, nonlinearity, device, dtype))
         self.num_layers = num_layers
+        self.hidden_size = hidden_size
+        self.device = device
+        self.dtype = dtype
         ### END YOUR SOLUTION
 
     def forward(self, X, h0=None):

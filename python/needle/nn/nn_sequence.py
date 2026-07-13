@@ -173,7 +173,7 @@ class LSTMCell(Module):
             self.bias_hh = Parameter(init.rand(4*hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
         else:
             self.bias_ih = None
-            self.bias_hh -= None
+            self.bias_hh = None
         self.sig = Sigmoid()
         self.hidden_size = hidden_size
         ### END YOUR SOLUTION
@@ -205,12 +205,12 @@ class LSTMCell(Module):
         else:
             h0, c0 = h[0], h[1]
         ifgo = X@self.W_ih+h0@self.W_hh # bs, 4*hidden_size: ifgo
-        if self.bias_hh:
+        if self.bias_hh is not None:
             bias = self.bias_hh+self.bias_ih
             bias = bias.reshape((1, 4*self.hidden_size))
             bias = bias.broadcast_to(ifgo.shape)
             ifgo = ifgo+bias
-        ifgo = ops.split(ifgo, 1)
+        ifgo = list(ops.split(ifgo, 1))
         i = self.sig(ops.stack(ifgo[0:self.hidden_size], 1))
         f = self.sig(ops.stack(ifgo[self.hidden_size:2*self.hidden_size], 1))
         g = ops.tanh(ops.stack(ifgo[2*self.hidden_size:3*self.hidden_size], 1))

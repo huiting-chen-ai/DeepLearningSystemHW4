@@ -248,9 +248,9 @@ class LSTM(Module):
             of shape (4*hidden_size,).
         """
         ### BEGIN YOUR SOLUTION
-        self.lstm_cells = [LSTM(input_size, hidden_size, bias, device, dtype)]
+        self.lstm_cells = [LSTMCell(input_size, hidden_size, bias, device, dtype)]
         for i in range(1, num_layers):
-            self.lstm_cells.append(LSTM(hidden_size, hidden_size, bias, device, dtype))
+            self.lstm_cells.append(LSTMCell(hidden_size, hidden_size, bias, device, dtype))
         self.num_layers = num_layers
         self.hidden_size = hidden_size
         self.device = device

@@ -165,7 +165,17 @@ class LSTMCell(Module):
         """
         super().__init__()
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        bound = np.sqrt(1/hidden_size)
+        self.W_ih = Parameter(init.rand(input_size, 4*hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        self.W_hh = Parameter(init.rand(hidden_size, 4*hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        if bias:
+            self.bias_ih = Parameter(init.rand(4*hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+            self.bias_hh = Parameter(init.rand(4*hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+        else:
+            self.bias_ih = None
+            self.bias_hh -= None
+        self.sig = Sigmoid()
+        self.hidden_size = hidden_size
         ### END YOUR SOLUTION
 
 
@@ -186,7 +196,28 @@ class LSTMCell(Module):
             element in the batch.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        bs = X.shape[0]
+        if h is None:
+            h0 = Tensor(init.zeros(bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+            c0 = Tensor(init.zeros(bs, self.hidden_size, device=self.device, dtype=self.dtype), 
+                       device=self.device, dtype=self.dtype, requires_grad=False)
+        else:
+            h0, c0 = h[0], h[1]
+        ifgo = X@self.W_ih+h0@self.W_hh # bs, 4*hidden_size: ifgo
+        if self.bias_hh:
+            bias = self.bias_hh+self.bias_ih
+            bias = bias.reshape((1, 4*self.hidden_size))
+            bias = bias.broadcast_to(ifgo.shape)
+            ifgo = ifgo+bias
+        ifgo = ops.split(ifgo, 1)
+        i = self.sig(ops.stack(ifgo[:self.hidden_size], 1))
+        f = self.sig(ops.stack(ifgo[self.hidden_size:2*self.hidden_size], 1))
+        g = ops.tanh(ops.stack(ifgo[2*self.hidden_size:3*self.hidden_size], 1))
+        o = self.sig(ops.stack(ifgo[3*self.hidden_size:], 1))
+        c_ = f*c0+i*g
+        h_ = o*ops.tanh(c_)
+        return h_, c_
         ### END YOUR SOLUTION
 
 

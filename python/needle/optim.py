@@ -40,7 +40,17 @@ class SGD(Optimizer):
         Note: This does not need to be implemented for HW2 and can be skipped.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        total_norm = 0
+        for p in self.params:
+            if p.grad is not None:
+                p_norm = np.linalg.norm(p.grad.numpy())
+                total_norm += p_norm**2
+        total_norm = np.sqrt(total_norm)
+        clip_coef = max_norm/(total_norm + 1e-6)
+        if clip_coef < 1:
+            for p in self.params:
+                if p.grad is not None:
+                    p.grad = p.grad*clip_coef
         ### END YOUR SOLUTION
 
 

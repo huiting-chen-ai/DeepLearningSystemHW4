@@ -151,7 +151,8 @@ def epoch_general_cifar10(dataloader, model, loss_fn=nn.SoftmaxLoss(), opt=None)
 
     for _, batch in enumerate(dataloader):
         X, y = batch
-        # X = X.reshape((X.shape[0], -1))
+        if opt is not None:
+            opt.reset_grad()
         logits = model(X)
         loss = loss_fn(logits, y)
         if opt is not None:
@@ -242,7 +243,34 @@ def epoch_general_ptb(data, model, seq_len=40, loss_fn=nn.SoftmaxLoss(), opt=Non
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    total_loss = 0
+    total_correct = 0
+    total_examples = 0
+
+    if opt is not None:
+        model.train()
+    else:
+        model.eval()
+
+    for i in enumerate(data.shape[0]-seq_len):
+        X, y = ndl.data.get_batch(data, i, seq_len, device=device, dtype=dtype)
+        if opt is not None:
+            opt.reset_grad()
+        pred, _ = model(X)
+        loss = loss_fn(pred, y)
+        if opt is not None:
+            opt.reset_grad()
+            loss.backward()
+            if clip:
+                opt.clip_grad_norm(clip)
+            opt.step()
+
+        total_loss += loss.numpy()
+        total_correct += np.sum(pred.numpy().argmax(axis=1) == y.numpy())
+
+    avg_loss = total_loss / (data.shape[0]-seq_len)
+    avg_accuracy = total_correct / ((data.shape[0]-seq_len)*seq_len)
+    return avg_accuracy, avg_loss
     ### END YOUR SOLUTION
 
 
@@ -269,7 +297,9 @@ def train_ptb(model, data, seq_len=40, n_epochs=1, optimizer=ndl.optim.SGD,
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    for epoch in range(n_epochs):
+        avg_acc, avg_loss = epoch_general_ptb(data, model, seq_len=seq_len, loss_fn=loss_fn(), opt=optimizer(), clip=clip, device=device, dtype=dtype)
+    return avg_acc, avg_loss
     ### END YOUR SOLUTION
 
 def evaluate_ptb(model, data, seq_len=40, loss_fn=nn.SoftmaxLoss,
@@ -289,7 +319,8 @@ def evaluate_ptb(model, data, seq_len=40, loss_fn=nn.SoftmaxLoss,
     """
     np.random.seed(4)
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    avg_acc, avg_loss = epoch_general_ptb(data, model, seq_len=seq_len, loss_fn=loss_fn(), opt=None, clip=None, device=device, dtype=dtype)
+    return avg_acc, avg_loss
     ### END YOUR SOLUTION
 
 ### CODE BELOW IS FOR ILLUSTRATION, YOU DO NOT NEED TO EDIT

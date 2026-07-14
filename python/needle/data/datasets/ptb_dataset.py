@@ -25,7 +25,10 @@ class Dictionary(object):
         Returns the word's unique ID.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        if self.word2idx.get(word) is None:
+            self.word2idx[word] = len(self.idx2word)
+            self.idx2word.append(word)
+        return self.word2idx[word]
         ### END YOUR SOLUTION
 
     def __len__(self):
@@ -33,7 +36,7 @@ class Dictionary(object):
         Returns the number of unique words in the dictionary.
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        return len(self.idx2word)
         ### END YOUR SOLUTION
 
 
@@ -60,7 +63,15 @@ class Corpus(object):
         ids: List of ids
         """
         ### BEGIN YOUR SOLUTION
-        raise NotImplementedError()
+        ids = []
+        with open(path, 'r') as f:
+            for i, line in enumerate(f):
+                if max_lines is not None and i>=max_lines:
+                    break
+                words = line.split()+['<eos>']
+                for w in words:
+                    ids.append(self.dictionary.add_word(w))
+        return ids
         ### END YOUR SOLUTION
 
 
@@ -81,7 +92,9 @@ def batchify(data, batch_size, device, dtype):
     Returns the data as a numpy array of shape (nbatch, batch_size).
     """
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    batch_num = len(data)//batch_size
+    out_data = data[:batch_num*batch_size]
+    return np.array(data, dtype=dtype).reshape(batch_size, batch_num).T
     ### END YOUR SOLUTION
 
 
@@ -105,5 +118,7 @@ def get_batch(batches, i, bptt, device=None, dtype=None):
     target - Tensor of shape (bptt*bs,) with cached data as NDArray
     """
     ### BEGIN YOUR SOLUTION
-    raise NotImplementedError()
+    data = batches[i:i+bptt]
+    target = batches[i+1:i+1+bptt]
+    return Tensor(data, device=device, dtype=dtype), Tensor(target.flatten(), device=device, dtype=dtype)
     ### END YOUR SOLUTION

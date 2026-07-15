@@ -61,20 +61,12 @@ class LogSumExp(TensorOp):
 
     def gradient(self, out_grad: Tensor, node: Tensor):
         ### BEGIN YOUR SOLUTION
-        Z = node.inputs[0]
-        M = array_api.max(Z.realize_cached_data(), axis=self.axes, keepdims=True)
-        Z = Z-M
-        expZ = exp(Z)
-        S = summation(expZ, axes=self.axes)
         if self.axes is None:
-            new_shape = [1] * len(Z.shape)
-        else:
-            new_shape = [1 if i in self.axes else Z.shape[i] for i in range(len(Z.shape))]
-        S = reshape(S, new_shape)
-        softmax = divide(expZ, broadcast_to(S, Z.shape))
-        out_grad_reshaped = reshape(out_grad, new_shape)
-        out_grad_broadcasted = broadcast_to(out_grad_reshaped, Z.shape)
-        return multiply(out_grad_broadcasted, softmax)
+            self.axes = tuple(range(len(node.inputs[0].shape)))
+        z = node.inputs[0]
+        shape = [1 if i in self.axes else z.shape[i] for i in range(len(z.shape))]
+        gradient = exp(z - node.reshape(shape).broadcast_to(z.shape))
+        return out_grad.reshape(shape).broadcast_to(z.shape)*gradient
         ### END YOUR SOLUTION
 
 

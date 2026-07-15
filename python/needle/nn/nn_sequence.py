@@ -46,8 +46,8 @@ class RNNCell(Module):
         self.W_ih = Parameter(init.rand(input_size, hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
         self.W_hh = Parameter(init.rand(hidden_size, hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
         if bias:
-            self.bias_ih = self.W_ih = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
-            self.bias_hh = self.W_ih = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+            self.bias_ih = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
+            self.bias_hh = Parameter(init.rand(hidden_size, low=-bound, high=bound, device=device, dtype=dtype, requires_grad=True))
         else:
             self.bias_ih = None
             self.bias_hh = None
@@ -333,7 +333,7 @@ class Embedding(Module):
         """
         ### BEGIN YOUR SOLUTION
         one_hot = init.one_hot(self.num_embeddings, x, device=self.device, dtype=self.dtype)
-        seq_len, bs = one_hot[0], one_hot[1]
+        seq_len, bs = one_hot.shape[0], one_hot.shape[1]
         one_hot = one_hot.reshape((seq_len*bs, self.num_embeddings))
         proj = one_hot@self.weight
         return proj.reshape((seq_len, bs, self.embedding_dim))

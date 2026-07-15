@@ -82,7 +82,7 @@ class LanguageModel(nn.Module):
         if seq_model == "rnn":
             self.model = nn.RNN(embedding_size, hidden_size, num_layers=num_layers, device=device, dtype=dtype)
         else:
-            self.model = nn.LSTM(embedding_size, hidden_size, num_layers=num_layers, device=None, dtype="float32")
+            self.model = nn.LSTM(embedding_size, hidden_size, num_layers=num_layers, device=device, dtype=dtype)
         self.linear = nn.Linear(hidden_size, output_size, device=device, dtype=dtype)
         ### END YOUR SOLUTION
 
